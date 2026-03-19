@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayulita Girls Trip - March 28-31, 2026</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #fdf9f3;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --text-light: #6b6b6b;
+    --coral: #e07a5f;
+    --coral-light: #fce8e2;
+    --coral-dark: #c4583f;
+    --teal: #3d8b84;
+    --teal-light: #e0f0ee;
+    --sand: #f4e8d1;
+    --border: #e8e2d8;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 750px;
+    margin: 0 auto;
+    padding: 40px 24px 60px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, var(--coral), var(--teal));
+    border-radius: var(--radius);
+    color: #fff;
+  }
+
+  header .emoji-big { font-size: 2.5rem; margin-bottom: 12px; }
+
+  header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  header p {
+    font-size: 1.05rem;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+
+  header .dates {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 8px 20px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  /* Info Bar */
+  .info-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 32px;
+  }
+
+  .info-item {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    text-align: center;
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow);
+  }
+
+  .info-item .icon { font-size: 1.4rem; margin-bottom: 6px; }
+  .info-item .label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-light); margin-bottom: 2px; }
+  .info-item .value { font-size: 0.9rem; font-weight: 600; }
+  .info-item a { color: var(--coral); text-decoration: none; }
+  .info-item a:hover { text-decoration: underline; }
+
+  /* Day Cards */
+  .day-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .day-header {
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .day-header:hover { background: #faf7f2; }
+
+  .day-number {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .day-1 .day-number { background: var(--coral); }
+  .day-2 .day-number { background: var(--teal); }
+  .day-3 .day-number { background: #d4a843; }
+  .day-4 .day-number { background: #7c6caf; }
+
+  .day-title-group { flex: 1; }
+
+  .day-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .day-subtitle {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-top: 2px;
+  }
+
+  .day-toggle {
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+    color: var(--text-light);
+  }
+
+  .day-card.open .day-toggle { transform: rotate(180deg); }
+
+  .day-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+  }
+
+  .day-card.open .day-content {
+    max-height: 2000px;
+  }
+
+  .day-inner {
+    padding: 0 24px 24px;
+  }
+
+  /* Timeline Items */
+  .timeline {
+    position: relative;
+    padding-left: 28px;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    background: var(--border);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 20px;
+  }
+
+  .timeline-item:last-child { padding-bottom: 0; }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--coral);
+    border: 2px solid #fff;
+    box-shadow: 0 0 0 2px var(--border);
+  }
+
+  .timeline-time {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--coral);
+    margin-bottom: 4px;
+  }
+
+  .timeline-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .timeline-desc {
+    font-size: 0.88rem;
+    color: var(--text-light);
+    line-height: 1.6;
+  }
+
+  .timeline-tag {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+
+  .tag-food { background: var(--coral-light); color: var(--coral-dark); }
+  .tag-activity { background: var(--teal-light); color: var(--teal); }
+  .tag-chill { background: var(--sand); color: #8a7340; }
+  .tag-transport { background: #e8e0f0; color: #6b5a8a; }
+
+  /* Tips Section */
+  .tips-card {
+    background: var(--sand);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .tips-card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+
+  .tip-item {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .tip-item:last-child { margin-bottom: 0; }
+  .tip-icon { flex-shrink: 0; font-size: 1.1rem; }
+
+  /* Restaurant List */
+  .restaurant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .restaurant-item {
+    background: var(--bg);
+    border-radius: 8px;
+    padding: 14px;
+  }
+
+  .restaurant-item h4 {
+    font-size: 0.88rem;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .restaurant-item p {
+    font-size: 0.78rem;
+    color: var(--text-light);
+    line-height: 1.4;
+  }
+
+  /* Footer */
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    color: var(--text-light);
+    font-size: 0.8rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 500px) {
+    .container { padding: 20px 16px 40px; }
+    header h1 { font-size: 1.7rem; }
+    header { padding: 28px 16px; }
+    .info-bar { grid-template-columns: 1fr 1fr; }
+    .day-inner { padding: 0 16px 20px; }
+    .restaurant-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="emoji-big">🌊🌴🇲🇽</div>
+    <h1>Sayulita Girls Trip</h1>
+    <p>Christina & Friends Hit the Beach</p>
+    <div class="dates">March 28 – 31, 2026</div>
+  </header>
+
+  <!-- Trip Info -->
+  <div class="info-bar">
+    <div class="info-item">
+      <div class="icon">🏨</div>
+      <div class="label">Hotel</div>
+      <div class="value"><a href="https://www.lapuestasayulita.com/" target="_blank">La Puesta Sayulita</a></div>
+    </div>
+    <div class="info-item">
+      <div class="icon">👯‍♀️</div>
+      <div class="label">Crew</div>
+      <div class="value">Christina + 5</div>
+    </div>
+    <div class="info-item">
+      <div class="icon">✈️</div>
+      <div class="label">Arrive</div>
+      <div class="value">Mar 28, 11:00 AM</div>
+    </div>
+    <div class="info-item">
+      <div class="icon">🚐</div>
+      <div class="label">Transport</div>
+      <div class="value">Shuttle to Sayulita</div>
+    </div>
+  </div>
+
+  <!-- DAY 1 -->
+  <div class="day-card day-1 open">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-number">1</div>
+      <div class="day-title-group">
+        <div class="day-title">Arrival Day — Settle In & Explore</div>
+        <div class="day-subtitle">Saturday, March 28</div>
+      </div>
+      <div class="day-toggle">▼</div>
+    </div>
+    <div class="day-content">
+      <div class="day-inner">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">11:00 AM</div>
+            <div class="timeline-title">Land at Puerto Vallarta Airport (PVR)</div>
+            <div class="timeline-desc">Grab your bags and meet your shuttle driver. The ride to Sayulita takes about 1 hour along the coast — gorgeous views to kick off the trip.</div>
+            <span class="timeline-tag tag-transport">Transport</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">12:30 PM</div>
+            <div class="timeline-title">Check in at La Puesta Sayulita</div>
+            <div class="timeline-desc">Right on the beach, 25 steps to the sand. Drop your bags, change into swimsuits, and take in those ocean views. The hotel has a pool with a waterslide too.</div>
+            <span class="timeline-tag tag-chill">Chill</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">1:30 PM</div>
+            <div class="timeline-title">Lunch at Barracuda</div>
+            <div class="timeline-desc">Amazing seafood right on the main drag. The fish and shrimp tacos are a local favorite — fresh, flavorful, and the perfect first meal in town. Great margaritas too.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">3:00 PM</div>
+            <div class="timeline-title">Explore Sayulita Town</div>
+            <div class="timeline-desc">Walk through the colorful streets, check out the murals and street art, browse the boutiques and surf shops. Hit the town square — it's small but vibrant. Pick up any beach supplies you need.</div>
+            <span class="timeline-tag tag-activity">Explore</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">5:00 PM</div>
+            <div class="timeline-title">Sunset Drinks at Alto Alto</div>
+            <div class="timeline-desc">Open-air rooftop vibes with craft cocktails and amazing views of the main street below. Happy hour is the perfect time to toast to the trip. Chic decor, great people-watching.</div>
+            <span class="timeline-tag tag-food">Drinks</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">7:30 PM</div>
+            <div class="timeline-title">Dinner at Carbon</div>
+            <div class="timeline-desc">Outdoor dining next to a charcoal grill — the octopus is perfectly charred, the tuna tartare tostada is incredible, and the garlic butter prawns are a must. One of the best restaurants in Sayulita.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 2 -->
+  <div class="day-card day-2">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-number">2</div>
+      <div class="day-title-group">
+        <div class="day-title">Beach, Surf & Good Vibes</div>
+        <div class="day-subtitle">Sunday, March 29</div>
+      </div>
+      <div class="day-toggle">▼</div>
+    </div>
+    <div class="day-content">
+      <div class="day-inner">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">8:30 AM</div>
+            <div class="timeline-title">Breakfast at Micelanea</div>
+            <div class="timeline-desc">Healthy, artsy brunch spot with fresh juices, smoothie bowls, and great coffee. Super relaxed vibe — the perfect slow morning start.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">10:00 AM</div>
+            <div class="timeline-title">Surf Lessons on the Beach</div>
+            <div class="timeline-desc">Book a group surf lesson — about $50-60 per person for 1.5-2 hours. The beach has calm sections perfect for beginners. Even if you wipe out the whole time, it's hilarious and unforgettable.</div>
+            <span class="timeline-tag tag-activity">Adventure</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">12:30 PM</div>
+            <div class="timeline-title">Beach Time & Lunch at El Itacate</div>
+            <div class="timeline-desc">Grab their famous cheese-wrapped burrito (~$9 USD) — instead of a tortilla, the whole thing is wrapped in melted cheese. Quick, cheap, and incredible. Then hit the beach.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">2:00 PM</div>
+            <div class="timeline-title">Pool & Spa Time at La Puesta</div>
+            <div class="timeline-desc">Head back to the hotel for pool time, waterslide fun, and maybe book a massage at the spa. Massages in Sayulita are way cheaper than back home — treat yourselves.</div>
+            <span class="timeline-tag tag-chill">Chill</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">4:00 PM</div>
+            <div class="timeline-title">Happy Hour at The Embers</div>
+            <div class="timeline-desc">Daily happy hour from 4-6 PM. Mediterranean-meets-Mexican food — try the Burrata pizza fritta or the charcoal bao buns. Great cocktails at happy hour prices.</div>
+            <span class="timeline-tag tag-food">Drinks</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">7:00 PM</div>
+            <div class="timeline-title">Dinner at La Rústica</div>
+            <div class="timeline-desc">Upscale Italian overlooking the street — perfect for a big group dinner. Wood-fired pizzas, handmade pastas, and Sayulita's lively energy all around you.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">9:00 PM</div>
+            <div class="timeline-title">Live Music at Xochi</div>
+            <div class="timeline-desc">One of Sayulita's most vibrant night spots — frequent live music, great drinks, and a fun social scene. Dance the night away!</div>
+            <span class="timeline-tag tag-activity">Nightlife</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 3 -->
+  <div class="day-card day-3">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-number">3</div>
+      <div class="day-title-group">
+        <div class="day-title">Adventure Day — Jungle & Islands</div>
+        <div class="day-subtitle">Monday, March 30</div>
+      </div>
+      <div class="day-toggle">▼</div>
+    </div>
+    <div class="day-content">
+      <div class="day-inner">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">7:30 AM</div>
+            <div class="timeline-title">Early Breakfast at MAXA (Hotel Restaurant)</div>
+            <div class="timeline-desc">Fuel up at the hotel's own restaurant — fine Mexican breakfast to get you ready for the big adventure day ahead.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">8:30 AM</div>
+            <div class="timeline-title">Marietas Islands Snorkeling Tour</div>
+            <div class="timeline-desc">30-minute boat ride to the famous Marietas Islands National Park. Snorkel at a reef, visit Long Island beach, and see the iconic Hidden Beach through a cave entrance. Book in advance — this fills up fast! (~$80-100/person)</div>
+            <span class="timeline-tag tag-activity">Adventure</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">1:00 PM</div>
+            <div class="timeline-title">Lunch at Mary's Traditional Cuisine</div>
+            <div class="timeline-desc">Big portions, great authentic Mexican food, good prices. Perfect after a morning on the water. Vegetarian options available too.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">3:00 PM</div>
+            <div class="timeline-title">Hippie Market & Shopping</div>
+            <div class="timeline-desc">Browse the riverside hippie market — colorful handmade goods, jewelry, beach blankets, and souvenirs. Pick up something to remember the trip by.</div>
+            <span class="timeline-tag tag-activity">Explore</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">4:30 PM</div>
+            <div class="timeline-title">Mexican Cooking Class</div>
+            <div class="timeline-desc">Learn to make fresh salsa, enchiladas, margaritas, and palomas. Fun group activity and you get to eat everything you make. Book the "Viva México" class for the full experience.</div>
+            <span class="timeline-tag tag-activity">Activity</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">7:30 PM</div>
+            <div class="timeline-title">Dinner at Achara Thai</div>
+            <div class="timeline-desc">Plot twist — amazing Thai food in Mexico! Founded by a New Yorker, everything is made from scratch. Open Wed-Sun, 5:30-11 PM. A nice change of pace from Mexican cuisine.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">9:30 PM</div>
+            <div class="timeline-title">Beach Bonfire & Stars</div>
+            <div class="timeline-desc">End the night on the beach with drinks. La Puesta's private beach is just steps away — perfect for a mellow last full evening under the stars.</div>
+            <span class="timeline-tag tag-chill">Chill</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DAY 4 -->
+  <div class="day-card day-4">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-number">4</div>
+      <div class="day-title-group">
+        <div class="day-title">Last Morning — Soak It In</div>
+        <div class="day-subtitle">Tuesday, March 31</div>
+      </div>
+      <div class="day-toggle">▼</div>
+    </div>
+    <div class="day-content">
+      <div class="day-inner">
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-time">7:00 AM</div>
+            <div class="timeline-title">Sunrise Yoga on the Beach</div>
+            <div class="timeline-desc">Sayulita is a yoga hub — classes run daily. Start your last morning with a beachfront session. Multiple studios in town, or the hotel may offer one.</div>
+            <span class="timeline-tag tag-chill">Wellness</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">8:30 AM</div>
+            <div class="timeline-title">Farewell Brunch at Micelanea</div>
+            <div class="timeline-desc">One more round of their amazing fresh juices and brunch plates. Soak in the vibe one last time.</div>
+            <span class="timeline-tag tag-food">Food</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">10:00 AM</div>
+            <div class="timeline-title">Last Beach Walk & Checkout</div>
+            <div class="timeline-desc">Take a final walk on La Puesta's beach, grab group photos, and check out of the hotel. Don't forget anything!</div>
+            <span class="timeline-tag tag-chill">Chill</span>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-time">11:00 AM</div>
+            <div class="timeline-title">Shuttle Back to PVR Airport</div>
+            <div class="timeline-desc">Allow at least 1.5 hours for the ride plus check-in time. Depending on your flight time, you may want to adjust. Safe travels home!</div>
+            <span class="timeline-tag tag-transport">Transport</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-card">
+    <h2>💡 Good to Know</h2>
+    <div class="tip-item">
+      <span class="tip-icon">💵</span>
+      <span>Bring Mexican pesos — many restaurants don't take cards. ATMs are available in town. US dollars accepted but at bad rates.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🚐</span>
+      <span>Airport shuttle is ~1 hour. Pre-book for $50-89 USD, or grab the COMPOSTELA bus for $3-4 (white/green bus, "Sayulita" on windshield, runs every 20 min).</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🚗</span>
+      <span>Skip the rental car — Sayulita is a walking town. Narrow streets, no parking. Everything is walkable.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🌞</span>
+      <span>Pack reef-safe sunscreen (required for Marietas Islands), a hat, and comfortable walking sandals.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">📱</span>
+      <span>Check your cell plan for Mexico coverage. Most US carriers include Mexico, but double-check roaming.</span>
+    </div>
+    <div class="tip-item">
+      <span class="tip-icon">🍽️</span>
+      <span>Main dishes average ~250 pesos ($13 USD) at mid-range spots. Street food is even cheaper and delicious.</span>
+    </div>
+  </div>
+
+  <!-- More Restaurants -->
+  <div class="day-card">
+    <div class="day-header" onclick="toggleDay(this)">
+      <div class="day-number" style="background:var(--coral);font-size:1rem;">🍽️</div>
+      <div class="day-title-group">
+        <div class="day-title">More Restaurant Options</div>
+        <div class="day-subtitle">Backup picks if you want to switch it up</div>
+      </div>
+      <div class="day-toggle">▼</div>
+    </div>
+    <div class="day-content">
+      <div class="day-inner">
+        <div class="restaurant-grid">
+          <div class="restaurant-item">
+            <h4>🔥 Carbon</h4>
+            <p>Charcoal-grilled seafood. Octopus, tuna tartare, garlic prawns. One of the best in town.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🍕 La Rústica</h4>
+            <p>Upscale Italian. Wood-fired pizza, handmade pasta. Great for groups.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🌊 Barracuda</h4>
+            <p>Fresh seafood tacos on the main street. Lively atmosphere.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🍳 Micelanea</h4>
+            <p>Artsy brunch spot. Smoothie bowls, fresh juices, healthy plates.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🎵 Xochi</h4>
+            <p>Live music, cocktails, veggie-friendly. Best night spot in town.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🥡 Achara Thai</h4>
+            <p>Authentic Thai. Scratch-made curries. Wed-Sun 5:30-11 PM.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🌮 El Itacate</h4>
+            <p>Famous cheese-wrapped burrito. $9 USD. Quick, casual, incredible.</p>
+          </div>
+          <div class="restaurant-item">
+            <h4>🍹 Alto Alto</h4>
+            <p>Rooftop craft cocktails with great views. Perfect for sunset.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Sayulita Girls Trip 2026 — have the best time! 🌊
+  </footer>
+</div>
+
+<script>
+function toggleDay(header) {
+  const card = header.closest('.day-card');
+  card.classList.toggle('open');
+}
+</script>
+</body>
+</html>
