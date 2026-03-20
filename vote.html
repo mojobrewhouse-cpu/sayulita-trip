@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sayulita Girls Trip — Vote on the Itinerary!</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap');
+
+  :root {
+    --bg: #fdf9f3;
+    --card: #ffffff;
+    --text: #2d2d2d;
+    --text-light: #6b6b6b;
+    --coral: #e07a5f;
+    --coral-light: #fce8e2;
+    --coral-dark: #c4583f;
+    --teal: #3d8b84;
+    --teal-light: #e0f0ee;
+    --gold: #d4a843;
+    --gold-light: #fdf3dc;
+    --purple: #7c6caf;
+    --purple-light: #ede8f5;
+    --sand: #f4e8d1;
+    --border: #e8e2d8;
+    --shadow: 0 2px 12px rgba(0,0,0,0.06);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 32px 20px 60px;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 32px;
+    padding: 36px 20px;
+    background: linear-gradient(135deg, var(--coral), var(--teal));
+    border-radius: var(--radius);
+    color: #fff;
+  }
+
+  header .emoji-big { font-size: 2.2rem; margin-bottom: 10px; }
+  header h1 { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 600; margin-bottom: 6px; }
+  header p { font-size: 0.95rem; font-weight: 300; opacity: 0.9; }
+  header .dates { display: inline-block; margin-top: 14px; padding: 6px 18px; background: rgba(255,255,255,0.2); border-radius: 20px; font-weight: 500; font-size: 0.9rem; }
+
+  /* Steps & Navigation */
+  .step-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+  }
+
+  .step-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    border: 2px solid var(--border);
+    color: var(--text-light);
+    background: var(--card);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .step-dot.active { border-color: var(--coral); color: #fff; background: var(--coral); }
+  .step-dot.completed { border-color: var(--teal); color: #fff; background: var(--teal); }
+
+  /* Screens */
+  .screen { display: none; }
+  .screen.active { display: block; animation: fadeIn 0.4s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Card */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .card h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .card .subtitle {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    margin-bottom: 18px;
+  }
+
+  /* Time Slot */
+  .time-slot {
+    margin-bottom: 20px;
+  }
+
+  .time-slot:last-child { margin-bottom: 0; }
+
+  .time-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--coral);
+    margin-bottom: 10px;
+  }
+
+  /* Option Cards */
+  .options-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  @media (max-width: 500px) {
+    .options-row { grid-template-columns: 1fr; }
+  }
+
+  .option-card {
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    user-select: none;
+  }
+
+  .option-card:hover { border-color: #ccc; background: #faf8f4; }
+  .option-card.selected { border-color: var(--coral); background: var(--coral-light); }
+  .option-card.selected::after {
+    content: '✓';
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--coral);
+  }
+
+  .option-emoji { font-size: 1.5rem; margin-bottom: 6px; }
+  .option-name { font-size: 0.92rem; font-weight: 600; margin-bottom: 4px; }
+  .option-desc { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
+  .option-price { font-size: 0.72rem; color: var(--teal); font-weight: 600; margin-top: 4px; }
+  .option-link { font-size: 0.72rem; margin-top: 4px; }
+  .option-link a { color: var(--teal); text-decoration: underline; }
+  .option-link a:hover { color: var(--coral); }
+
+  .write-in-input {
+    width: 100%;
+    margin-top: 8px;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.82rem;
+    background: #faf8f4;
+    color: var(--text);
+    outline: none;
+    display: none;
+  }
+  .write-in-input:focus { border-color: var(--coral); background: #fff; }
+  .option-card.selected .write-in-input { display: block; }
+
+  /* Name Picker */
+  .name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 16px 0;
+  }
+  @media (max-width: 500px) { .name-grid { grid-template-columns: 1fr; } }
+
+  .name-btn {
+    padding: 16px;
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    background: var(--card);
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .name-btn:hover { border-color: #ccc; background: #faf8f4; }
+  .name-btn.selected { border-color: var(--coral); background: var(--coral-light); color: var(--coral); }
+
+  .nav-link { display: block; text-align: center; margin-top: 16px; font-size: 0.85rem; }
+  .nav-link a { color: var(--teal); text-decoration: underline; }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 32px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    width: 100%;
+  }
+
+  .btn-primary { background: var(--coral); color: #fff; }
+  .btn-primary:hover { background: var(--coral-dark); }
+
+  .btn-teal { background: var(--teal); color: #fff; }
+  .btn-teal:hover { background: #2d7a73; }
+
+  .btn-outline { background: transparent; color: var(--coral); border: 2px solid var(--coral); }
+  .btn-outline:hover { background: var(--coral-light); }
+
+  .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+  .btn-row .btn { flex: 1; }
+
+  /* Results */
+  .results-bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .results-label { font-size: 0.88rem; font-weight: 600; flex: 1; }
+
+  .results-bar-fill {
+    flex: 2;
+    height: 24px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .results-bar-inner {
+    height: 100%;
+    border-radius: 12px;
+    transition: width 0.6s ease;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+
+  .results-bar-inner span {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #fff;
+  }
+
+  .winner-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    background: var(--gold-light);
+    color: var(--gold);
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 10px;
+    margin-left: 8px;
+  }
+
+  /* Final Itinerary */
+  .final-event {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: flex-start;
+  }
+
+  .final-event:last-child { border-bottom: none; }
+
+  .final-time {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--coral);
+    min-width: 70px;
+    padding-top: 2px;
+  }
+
+  .final-details { flex: 1; }
+  .final-name { font-size: 0.95rem; font-weight: 600; margin-bottom: 2px; }
+  .final-desc { font-size: 0.82rem; color: var(--text-light); }
+
+  .final-day-header {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    padding: 10px 0;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .final-day-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  /* Vote Count */
+  .vote-count-bar {
+    text-align: center;
+    padding: 12px;
+    background: var(--sand);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 0.9rem;
+  }
+
+  .vote-count-bar strong { color: var(--coral); }
+
+  footer {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-light);
+    font-size: 0.8rem;
+  }
+
+  .instructions {
+    background: var(--card);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .instructions h3 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--coral);
+  }
+  .instructions p {
+    font-size: 0.88rem;
+    color: var(--text);
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .instructions p:last-child { margin-bottom: 0; }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="emoji-big">🌊🌴🗳️</div>
+    <h1>Plan Our Sayulita Trip!</h1>
+    <p>Pick what you want to do — the group decides together</p>
+    <div class="dates">March 28 – 31, 2026</div>
+  </header>
+
+  <!-- Step Navigation -->
+  <div class="step-nav" id="step-nav">
+    <div class="step-dot active" data-step="0" onclick="goToStep(0)">👋</div>
+    <div class="step-dot" data-step="1" onclick="goToStep(1)">1</div>
+    <div class="step-dot" data-step="2" onclick="goToStep(2)">2</div>
+    <div class="step-dot" data-step="3" onclick="goToStep(3)">3</div>
+    <div class="step-dot" data-step="4" onclick="goToStep(4)">4</div>
+    <div class="step-dot" data-step="5" onclick="goToStep(5)">📊</div>
+  </div>
+
+  <!-- SCREEN 0: Name Picker -->
+  <div class="screen active" id="screen-0">
+    <div class="card">
+      <h2>Who's Voting?</h2>
+      <p class="subtitle">Pick your name so we know who voted! You can change your votes anytime — they'll replace your previous picks.</p>
+      <div class="name-grid">
+        <button class="name-btn" onclick="pickName(this, 'Elizabeth')">Elizabeth</button>
+        <button class="name-btn" onclick="pickName(this, 'Joey')">Joey</button>
+        <button class="name-btn" onclick="pickName(this, 'Mary')">Mary</button>
+        <button class="name-btn" onclick="pickName(this, 'Christina')">Christina</button>
+        <button class="name-btn" onclick="pickName(this, 'Natalie')">Natalie</button>
+        <button class="name-btn" onclick="pickName(this, 'Heidi')">Heidi</button>
+        <button class="name-btn" onclick="pickName(this, 'Sharon')">Sharon</button>
+      </div>
+    </div>
+    <div class="instructions">
+      <h3>How It Works</h3>
+      <p>Pick your name, then vote on what you want to do for each time slot across all 4 days. You can pick from the options, choose "Do Your Own Thing" if you'd rather chill, or write in your own idea!</p>
+      <p>After everyone votes, check the results page to see what the group picked. Changed your mind? No problem — just come back, pick your name, and vote again. Your new votes will replace your old ones.</p>
+    </div>
+    <button class="btn btn-primary" id="start-voting-btn" onclick="startVoting()" style="opacity:0.5;pointer-events:none;">Pick your name to start →</button>
+  </div>
+
+  <!-- SCREEN 1: Day 1 Afternoon (arrival day) -->
+  <div class="screen" id="screen-1">
+    <div class="card">
+      <h2>Day 1 — Saturday, March 28</h2>
+      <p class="subtitle">You land at PVR at 11 AM, shuttle rolls into Sayulita by ~1 PM. Check in, unpack, take a breath — you made it! Now what?</p>
+
+      <div class="time-slot">
+        <div class="time-label">🍽️ First Lunch (~1:30 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d1-lunch" data-value="pooldrinks" onclick="selectOption(this)">
+            <div class="option-emoji">🏊‍♀️</div>
+            <div class="option-name">Pool, Drinks & Hotel Bites</div>
+            <div class="option-desc">Skip the restaurant — change into swimsuits, hit the pool & waterslide, order food and drinks poolside at MAZO bar.</div>
+            <div class="option-price">~$12-20/person</div>
+          </div>
+          <div class="option-card" data-category="d1-lunch" data-value="mazo" onclick="selectOption(this)">
+            <div class="option-emoji">🏨</div>
+            <div class="option-name">MAZO (Hotel Restaurant)</div>
+            <div class="option-desc">Eat right at the hotel! Chef Lacho Ruiz's elevated Mexican food with ocean views. No need to go anywhere after check-in.</div>
+            <div class="option-price">~$15-25/person</div>
+          </div>
+          <div class="option-card" data-category="d1-lunch" data-value="barracuda" onclick="selectOption(this)">
+            <div class="option-emoji">🌊</div>
+            <div class="option-name">Barracuda</div>
+            <div class="option-desc">Seafood tacos on the main drag. Fresh, vibrant, great margaritas.</div>
+            <div class="option-price">~$12-18/person</div>
+          </div>
+          <div class="option-card" data-category="d1-lunch" data-value="elitacate" onclick="selectOption(this)">
+            <div class="option-emoji">🧀</div>
+            <div class="option-name">El Itacate</div>
+            <div class="option-desc">Famous cheese-wrapped burrito. Quick, casual, incredible.</div>
+            <div class="option-price">~$9/person</div>
+          </div>
+          <div class="option-card" data-category="d1-lunch" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-lunch" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd1-lunch')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🎯 Afternoon Activity (~3 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d1-afternoon" data-value="explore" onclick="selectOption(this)">
+            <div class="option-emoji">🎨</div>
+            <div class="option-name">Explore Town</div>
+            <div class="option-desc">Murals, street art, boutiques, surf shops, town square. Get the lay of the land.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-afternoon" data-value="beach" onclick="selectOption(this)">
+            <div class="option-emoji">🏖️</div>
+            <div class="option-name">Beach & Pool</div>
+            <div class="option-desc">Hit the sand and pool right away. Waterslide at La Puesta! Chill start.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-afternoon" data-value="market" onclick="selectOption(this)">
+            <div class="option-emoji">🛍️</div>
+            <div class="option-name">Hippie Market</div>
+            <div class="option-desc">Riverside market with handmade jewelry, blankets, souvenirs, and crafts.</div>
+            <div class="option-price">Free to browse</div>
+          </div>
+          <div class="option-card" data-category="d1-afternoon" data-value="spa" onclick="selectOption(this)">
+            <div class="option-emoji">💆‍♀️</div>
+            <div class="option-name">Spa & Massage</div>
+            <div class="option-desc">Start the trip pampered. Way cheaper than home. Relax and unwind.</div>
+            <div class="option-price">~$40-60/person</div>
+          </div>
+          <div class="option-card" data-category="d1-afternoon" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-afternoon" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd1-afternoon')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🌅 Sunset Drinks (~5 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d1-sunset" data-value="altoalto" onclick="selectOption(this)">
+            <div class="option-emoji">🍹</div>
+            <div class="option-name">Alto Alto</div>
+            <div class="option-desc">Rooftop craft cocktails, chic decor, amazing people-watching.</div>
+            <div class="option-price">~$8-12/drink</div>
+          </div>
+          <div class="option-card" data-category="d1-sunset" data-value="embers" onclick="selectOption(this)">
+            <div class="option-emoji">🔥</div>
+            <div class="option-name">The Embers (Happy Hour)</div>
+            <div class="option-desc">Daily 4-6 PM happy hour. Great food + drinks at discounted prices.</div>
+            <div class="option-price">~$6-10/drink</div>
+          </div>
+          <div class="option-card" data-category="d1-sunset" data-value="roomhh" onclick="selectOption(this)">
+            <div class="option-emoji">🏨</div>
+            <div class="option-name">Room Happy Hour</div>
+            <div class="option-desc">Hit a local shop for cocktail ingredients, snacks, chips, guac & salsa. Mix drinks in the room, snack and pre-game by the pool.</div>
+            <div class="option-price">~$20-30 to stock up</div>
+          </div>
+          <div class="option-card" data-category="d1-sunset" data-value="poolbar" onclick="selectOption(this)">
+            <div class="option-emoji">🏊‍♀️</div>
+            <div class="option-name">Pool & MAZO Bar</div>
+            <div class="option-desc">Chill at La Puesta's pool with the waterslide, grab sunset drinks at the hotel's own oceanview bar.</div>
+            <div class="option-price">~$8-12/drink</div>
+          </div>
+          <div class="option-card" data-category="d1-sunset" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-sunset" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd1-sunset')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🍽️ Dinner (~7:30 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d1-dinner" data-value="carbon" onclick="selectOption(this)">
+            <div class="option-emoji">🔥</div>
+            <div class="option-name">Carbon</div>
+            <div class="option-desc">Outdoor charcoal grill. Octopus, tuna tartare, garlic prawns. Top-rated.</div>
+            <div class="option-price">~$20-30/person</div>
+          </div>
+          <div class="option-card" data-category="d1-dinner" data-value="larustica" onclick="selectOption(this)">
+            <div class="option-emoji">🍕</div>
+            <div class="option-name">La Rústica</div>
+            <div class="option-desc">Upscale Italian. Wood-fired pizza, handmade pasta. Great for groups.</div>
+            <div class="option-price">~$18-25/person</div>
+          </div>
+          <div class="option-card" data-category="d1-dinner" data-value="achara" onclick="selectOption(this)">
+            <div class="option-emoji">🥡</div>
+            <div class="option-name">Achara Thai</div>
+            <div class="option-desc">Amazing Thai food! Scratch-made curries. Open Wed-Sun 5:30-11 PM.</div>
+            <div class="option-price">~$15-22/person</div>
+          </div>
+          <div class="option-card" data-category="d1-dinner" data-value="xochi" onclick="selectOption(this)">
+            <div class="option-emoji">🎵</div>
+            <div class="option-name">Xochi</div>
+            <div class="option-desc">Live music, vibrant scene, great food + cocktails. Veggie options.</div>
+            <div class="option-price">~$15-25/person</div>
+          </div>
+          <div class="option-card" data-category="d1-dinner" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d1-dinner" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd1-dinner')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="nextStep()">Next: Day 2 →</button>
+  </div>
+
+  <!-- SCREEN 2: Day 2 -->
+  <div class="screen" id="screen-2">
+    <div class="card">
+      <h2>Day 2 — Sunday, March 29</h2>
+      <p class="subtitle">Wake up, grab your coffee, breakfast at your own pace — then get ready! Beach, adventure, food, nightlife… what's the vibe?</p>
+
+      <div class="time-slot">
+        <div class="time-label">☀️ Morning Activity (~9:30 AM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d2-morning" data-value="surf" onclick="selectOption(this)">
+            <div class="option-emoji">🏄‍♀️</div>
+            <div class="option-name">Surf Lessons</div>
+            <div class="option-desc">Group lesson, 1.5-2 hrs. Beginners welcome. Hilarious and unforgettable.</div>
+            <div class="option-price">~$50-60/person</div>
+            <div class="option-link"><a href="https://wildmex.com/activities/surf-lessons-sayulita-mexico/" target="_blank">Book at WildMex</a></div>
+          </div>
+          <div class="option-card" data-category="d2-morning" data-value="yoga" onclick="selectOption(this)">
+            <div class="option-emoji">🧘‍♀️</div>
+            <div class="option-name">Beach Yoga</div>
+            <div class="option-desc">Morning yoga session on the sand. Sayulita is a yoga hub. Super peaceful.</div>
+            <div class="option-price">~$15-20/person</div>
+          </div>
+          <div class="option-card" data-category="d2-morning" data-value="snorkel" onclick="selectOption(this)">
+            <div class="option-emoji">🤿</div>
+            <div class="option-name">Guided Snorkel Tour</div>
+            <div class="option-desc">Boat to the best spots with a guide. All gear included! Or rent from beach vendors and explore Playa de los Muertos on your own.</div>
+            <div class="option-price">~$40-60/person (gear incl.)</div>
+            <div class="option-link"><a href="https://www.oceanoadventure.com/snorkeling-marietas" target="_blank">Book at Oceano Adventures</a></div>
+          </div>
+          <div class="option-card" data-category="d2-morning" data-value="lazymorning" onclick="selectOption(this)">
+            <div class="option-emoji">😴</div>
+            <div class="option-name">Sleep In & Beach</div>
+            <div class="option-desc">No alarm. Slow breakfast, then straight to the beach. Vacation mode.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-morning" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-morning" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd2-morning')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🍽️ Lunch (~1 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d2-lunch" data-value="elitacate" onclick="selectOption(this)">
+            <div class="option-emoji">🧀</div>
+            <div class="option-name">El Itacate</div>
+            <div class="option-desc">The famous cheese burrito. Quick, cheap, incredible.</div>
+            <div class="option-price">~$9/person</div>
+          </div>
+          <div class="option-card" data-category="d2-lunch" data-value="barracuda" onclick="selectOption(this)">
+            <div class="option-emoji">🌊</div>
+            <div class="option-name">Barracuda</div>
+            <div class="option-desc">Seafood tacos, fresh ceviche, lively atmosphere.</div>
+            <div class="option-price">~$12-18/person</div>
+          </div>
+          <div class="option-card" data-category="d2-lunch" data-value="streetfood" onclick="selectOption(this)">
+            <div class="option-emoji">🌮</div>
+            <div class="option-name">Street Food Crawl</div>
+            <div class="option-desc">Wander and try different taco stands, fruit carts, and vendors. The real deal.</div>
+            <div class="option-price">~$5-10/person</div>
+          </div>
+          <div class="option-card" data-category="d2-lunch" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-lunch" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd2-lunch')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🌴 Afternoon (~3 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d2-afternoon" data-value="pool" onclick="selectOption(this)">
+            <div class="option-emoji">🏊‍♀️</div>
+            <div class="option-name">Pool & Spa at La Puesta</div>
+            <div class="option-desc">Waterslide, pool, maybe a massage. Full chill mode.</div>
+            <div class="option-price">Free (spa extra)</div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="tequila" onclick="selectOption(this)">
+            <div class="option-emoji">🥃</div>
+            <div class="option-name">Tequila Tasting</div>
+            <div class="option-desc">Local tequila/mezcal tasting. Learn the difference, sample the good stuff.</div>
+            <div class="option-price">~$25-40/person</div>
+            <div class="option-link"><a href="https://www.sayulitalife.com/tequila-experience" target="_blank">Book a tasting</a></div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="shopping" onclick="selectOption(this)">
+            <div class="option-emoji">🛍️</div>
+            <div class="option-name">Shopping & Boutiques</div>
+            <div class="option-desc">Hit the local shops — beachwear, jewelry, art, souvenirs.</div>
+            <div class="option-price">Varies</div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="tacotour" onclick="selectOption(this)">
+            <div class="option-emoji">🌮</div>
+            <div class="option-name">Tacos & Tequila Tour</div>
+            <div class="option-desc">Walking food tour — 5 stops over 2-3 hrs. Tacos, tequila, mezcal, raicilla. All food & drinks included! Starts 4:30 PM.</div>
+            <div class="option-price">~$99/person (all inclusive)</div>
+            <div class="option-link"><a href="https://mexicanculinaryexperiences.com/food-tours/sayulita-experience/" target="_blank">Book tour</a></div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="roomhh" onclick="selectOption(this)">
+            <div class="option-emoji">🍸</div>
+            <div class="option-name">Room Happy Hour & Pool</div>
+            <div class="option-desc">Stock up on cocktail ingredients and snacks from a local shop, mix drinks, chill at the pool. Low-key afternoon.</div>
+            <div class="option-price">~$20-30 to stock up</div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-afternoon" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd2-afternoon')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🍽️ Dinner (~7 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d2-dinner" data-value="larustica" onclick="selectOption(this)">
+            <div class="option-emoji">🍕</div>
+            <div class="option-name">La Rústica</div>
+            <div class="option-desc">Italian, wood-fired pizza, great group vibe overlooking the street.</div>
+            <div class="option-price">~$18-25/person</div>
+          </div>
+          <div class="option-card" data-category="d2-dinner" data-value="carbon" onclick="selectOption(this)">
+            <div class="option-emoji">🔥</div>
+            <div class="option-name">Carbon</div>
+            <div class="option-desc">Best charcoal grill in town. Octopus, prawns, tuna tartare.</div>
+            <div class="option-price">~$20-30/person</div>
+          </div>
+          <div class="option-card" data-category="d2-dinner" data-value="embers" onclick="selectOption(this)">
+            <div class="option-emoji">🥘</div>
+            <div class="option-name">The Embers</div>
+            <div class="option-desc">Mediterranean-Mexican. Burrata pizza fritta, bao buns, creative menu.</div>
+            <div class="option-price">~$18-25/person</div>
+          </div>
+          <div class="option-card" data-category="d2-dinner" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-dinner" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd2-dinner')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🌙 Night (~9 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d2-night" data-value="xochi" onclick="selectOption(this)">
+            <div class="option-emoji">🎵</div>
+            <div class="option-name">Live Music at Xochi</div>
+            <div class="option-desc">Sayulita's best night spot. Dancing, live bands, great cocktails.</div>
+            <div class="option-price">~$10-15/drinks</div>
+          </div>
+          <div class="option-card" data-category="d2-night" data-value="barhopping" onclick="selectOption(this)">
+            <div class="option-emoji">🍸</div>
+            <div class="option-name">Bar Hopping</div>
+            <div class="option-desc">Hit multiple spots around town. Sayulita has a fun, walkable bar scene.</div>
+            <div class="option-price">Varies</div>
+          </div>
+          <div class="option-card" data-category="d2-night" data-value="beachnight" onclick="selectOption(this)">
+            <div class="option-emoji">🌊</div>
+            <div class="option-name">Beach Night</div>
+            <div class="option-desc">Drinks on the beach under the stars. Mellow, beautiful, memorable.</div>
+            <div class="option-price">~$5-10/drinks</div>
+          </div>
+          <div class="option-card" data-category="d2-night" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d2-night" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd2-night')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep()">Next: Day 3 →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 3: Day 3 -->
+  <div class="screen" id="screen-3">
+    <div class="card">
+      <h2>Day 3 — Monday, March 30</h2>
+      <p class="subtitle">Wake up, grab your coffee, breakfast at your own pace. Get ready for beach, adventure, food, or full chill — you decide!</p>
+
+      <div class="time-slot">
+        <div class="time-label">⛵ Big Activity (Morning/Half Day)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d3-bigactivity" data-value="marietas" onclick="selectOption(this)">
+            <div class="option-emoji">🏝️</div>
+            <div class="option-name">Marietas Islands Tour</div>
+            <div class="option-desc">Snorkeling, Hidden Beach, boat ride. The #1 excursion. Book ahead!</div>
+            <div class="option-price">~$80-100/person</div>
+            <div class="option-link"><a href="https://chicaloccatours.com/our-tours/marietas-islands/" target="_blank">Book tour</a></div>
+          </div>
+          <div class="option-card" data-category="d3-bigactivity" data-value="jungle" onclick="selectOption(this)">
+            <div class="option-emoji">🌿</div>
+            <div class="option-name">Jungle Zipline & ATV</div>
+            <div class="option-desc">Zip through the jungle canopy and ATV through trails. Adrenaline rush!</div>
+            <div class="option-price">~$70-90/person</div>
+          </div>
+          <div class="option-card" data-category="d3-bigactivity" data-value="surfday" onclick="selectOption(this)">
+            <div class="option-emoji">🏄‍♀️</div>
+            <div class="option-name">Full Surf Day</div>
+            <div class="option-desc">Morning lesson + afternoon free surf. Rent boards for the whole day.</div>
+            <div class="option-price">~$60-70/person</div>
+          </div>
+          <div class="option-card" data-category="d3-bigactivity" data-value="beachday" onclick="selectOption(this)">
+            <div class="option-emoji">🏖️</div>
+            <div class="option-name">Pure Beach Day</div>
+            <div class="option-desc">No schedule. Beach, pool, books, naps, repeat. Full vacation mode.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d3-bigactivity" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d3-bigactivity" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd3-bigactivity')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🌇 Afternoon/Evening Activity (~4 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d3-afternoon" data-value="cooking" onclick="selectOption(this)">
+            <div class="option-emoji">👩‍🍳</div>
+            <div class="option-name">Cooking Class</div>
+            <div class="option-desc">Salsa, enchiladas, margaritas. Fun group activity, eat what you make.</div>
+            <div class="option-price">~$60-80/person</div>
+            <div class="option-link"><a href="https://www.sayulitalife.com/culinary/cooking_classes" target="_blank">Browse classes</a></div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="market" onclick="selectOption(this)">
+            <div class="option-emoji">🛍️</div>
+            <div class="option-name">Hippie Market & Shopping</div>
+            <div class="option-desc">Riverside market, handmade goods, souvenirs. Browse and bargain.</div>
+            <div class="option-price">Free to browse</div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="sunset" onclick="selectOption(this)">
+            <div class="option-emoji">🌅</div>
+            <div class="option-name">Sunset Horseback Ride</div>
+            <div class="option-desc">Ride horses along the beach at sunset. Instagram-perfect.</div>
+            <div class="option-price">~$50-70/person</div>
+            <div class="option-link"><a href="https://www.sayulitalife.com/horse-riding-sayulita" target="_blank">Book ride</a></div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="spa" onclick="selectOption(this)">
+            <div class="option-emoji">💆‍♀️</div>
+            <div class="option-name">Spa Afternoon</div>
+            <div class="option-desc">Massages, facials, the works. Pamper day before the last night.</div>
+            <div class="option-price">~$40-70/person</div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="tacotour" onclick="selectOption(this)">
+            <div class="option-emoji">🌮</div>
+            <div class="option-name">Tacos & Tequila Tour</div>
+            <div class="option-desc">Walking food tour — 5 stops, 2-3 hrs. Tacos, tequila, mezcal. All food & drinks included! Starts 4:30 PM.</div>
+            <div class="option-price">~$99/person (all inclusive)</div>
+            <div class="option-link"><a href="https://mexicanculinaryexperiences.com/food-tours/sayulita-experience/" target="_blank">Book tour</a></div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="poolhh" onclick="selectOption(this)">
+            <div class="option-emoji">🏊‍♀️</div>
+            <div class="option-name">Pool & Room Happy Hour</div>
+            <div class="option-desc">Chill at the pool, mix drinks and snack on store-bought goodies in the room. Pre-game for the last big dinner.</div>
+            <div class="option-price">~$20-30 for supplies</div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d3-afternoon" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd3-afternoon')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🍽️ Last Big Dinner (~7:30 PM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d3-dinner" data-value="carbon" onclick="selectOption(this)">
+            <div class="option-emoji">🔥</div>
+            <div class="option-name">Carbon</div>
+            <div class="option-desc">Save the best for last? Charcoal-grilled perfection.</div>
+            <div class="option-price">~$20-30/person</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="achara" onclick="selectOption(this)">
+            <div class="option-emoji">🥡</div>
+            <div class="option-name">Achara Thai</div>
+            <div class="option-desc">Plot twist — Thai food in Mexico! Everything scratch-made.</div>
+            <div class="option-price">~$15-22/person</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="larustica" onclick="selectOption(this)">
+            <div class="option-emoji">🍕</div>
+            <div class="option-name">La Rústica</div>
+            <div class="option-desc">Group dinner at the Italian spot. Pasta, pizza, wine.</div>
+            <div class="option-price">~$18-25/person</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="embers" onclick="selectOption(this)">
+            <div class="option-emoji">🥘</div>
+            <div class="option-name">The Embers</div>
+            <div class="option-desc">Creative Mediterranean-Mexican. Bao buns, porchetta, great vibe.</div>
+            <div class="option-price">~$18-25/person</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="mazo" onclick="selectOption(this)">
+            <div class="option-emoji">🏨</div>
+            <div class="option-name">MAZO (Hotel Restaurant)</div>
+            <div class="option-desc">Award-winning Chef Lacho Ruiz. Elevated Mexican cuisine, ocean views, local seafood. No need to leave the hotel!</div>
+            <div class="option-price">~$25-35/person</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d3-dinner" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd3-dinner')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+      <button class="btn btn-primary" onclick="nextStep()">Next: Day 4 →</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 4: Day 4 (departure) -->
+  <div class="screen" id="screen-4">
+    <div class="card">
+      <h2>Day 4 — Tuesday, March 31</h2>
+      <p class="subtitle">Last morning — wake up slow, soak it in one more time. Make it count!</p>
+
+      <div class="time-slot">
+        <div class="time-label">🌅 Last Morning (~7-8 AM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d4-morning" data-value="yoga" onclick="selectOption(this)">
+            <div class="option-emoji">🧘‍♀️</div>
+            <div class="option-name">Sunrise Beach Yoga</div>
+            <div class="option-desc">Perfect peaceful ending. Beachfront yoga as the sun comes up.</div>
+            <div class="option-price">~$15-20/person</div>
+          </div>
+          <div class="option-card" data-category="d4-morning" data-value="walk" onclick="selectOption(this)">
+            <div class="option-emoji">🚶‍♀️</div>
+            <div class="option-name">Beach Walk & Photos</div>
+            <div class="option-desc">Last stroll on the sand, group photos, soak it all in.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d4-morning" data-value="sleep" onclick="selectOption(this)">
+            <div class="option-emoji">😴</div>
+            <div class="option-name">Sleep In</div>
+            <div class="option-desc">It's vacation. Sleep until you have to leave.</div>
+            <div class="option-price">Free & priceless</div>
+          </div>
+          <div class="option-card" data-category="d4-morning" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d4-morning" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd4-morning')">
+          </div>
+        </div>
+      </div>
+
+      <div class="time-slot">
+        <div class="time-label">🍳 Farewell Brunch (~9 AM)</div>
+        <div class="options-row">
+          <div class="option-card" data-category="d4-brunch" data-value="micelanea" onclick="selectOption(this)">
+            <div class="option-emoji">🥣</div>
+            <div class="option-name">Micelanea</div>
+            <div class="option-desc">Fresh juices, smoothie bowls, healthy brunch. Artsy vibe.</div>
+            <div class="option-price">~$10-14/person</div>
+          </div>
+          <div class="option-card" data-category="d4-brunch" data-value="hotel" onclick="selectOption(this)">
+            <div class="option-emoji">🏨</div>
+            <div class="option-name">MAXA (Hotel Restaurant)</div>
+            <div class="option-desc">Easy — eat at the hotel. Fine Mexican breakfast, no rush.</div>
+            <div class="option-price">Included/~$12</div>
+          </div>
+          <div class="option-card" data-category="d4-brunch" data-value="marys" onclick="selectOption(this)">
+            <div class="option-emoji">🌮</div>
+            <div class="option-name">Mary's Traditional</div>
+            <div class="option-desc">One last big authentic Mexican meal before you go.</div>
+            <div class="option-price">~$10-15/person</div>
+          </div>
+          <div class="option-card" data-category="d4-brunch" data-value="ownthing" onclick="selectOption(this)">
+            <div class="option-emoji">🤙</div>
+            <div class="option-name">Do Your Own Thing</div>
+            <div class="option-desc">Sleep in, nap, wander, explore — no pressure, do whatever feels right.</div>
+            <div class="option-price">Free</div>
+          </div>
+          <div class="option-card" data-category="d4-brunch" data-value="writein" onclick="selectOption(this)">
+            <div class="option-emoji">✏️</div>
+            <div class="option-name">Write-In Vote</div>
+            <div class="option-desc">Got a better idea? Type it in!</div>
+            <input class="write-in-input" type="text" placeholder="Your idea..." onclick="event.stopPropagation()" onchange="handleWriteIn(this, 'd4-brunch')">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="prevStep()">← Back</button>
+      <button class="btn btn-teal" onclick="submitVotes()">Submit My Votes! 🗳️</button>
+    </div>
+  </div>
+
+  <!-- SCREEN 5: Results -->
+  <div class="screen" id="screen-5">
+    <div class="vote-count-bar" id="vote-count-bar">
+      <strong id="total-votes">0</strong> people have voted so far!
+    </div>
+
+    <div class="card">
+      <h2>📊 Group Results</h2>
+      <p class="subtitle">Here's what everyone picked. Top votes become the official itinerary!</p>
+      <div id="results-container"></div>
+    </div>
+
+    <div class="card" id="final-itinerary-card" style="display:none;">
+      <h2>🎉 Your Official Itinerary</h2>
+      <p class="subtitle">Based on the group's top picks — here's the plan!</p>
+      <div id="final-itinerary"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="resetVoting()">Vote Again</button>
+      <button class="btn btn-primary" onclick="buildFinalItinerary()">Build Final Itinerary</button>
+    </div>
+  </div>
+
+  <div class="nav-link"><a href="scavenger.html">📸 Check out the Scavenger Hunt!</a></div>
+  <div class="nav-link" style="margin-top:8px;"><a href="https://dropevent.com/sayulitagirls2026" target="_blank">📱 Upload Trip Photos (no app needed!)</a></div>
+  <div class="nav-link" style="margin-top:8px;"><a href="index.html">🌙 Sayulita Dreams — What did you dream last night?</a></div>
+  <footer>Sayulita Girls Trip 2026 — March 28-31 at La Puesta Sayulita 🌊</footer>
+</div>
+
+<script>
+// ========== STATE ==========
+let currentStep = 0;
+const totalSteps = 6;
+let myVotes = {};
+let voterName = '';
+
+// Use localStorage to accumulate votes from everyone
+const STORAGE_KEY = 'sayulita-votes-2026';
+
+function getAllVotes() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  } catch { return []; }
+}
+
+function saveVote(votes) {
+  const all = getAllVotes();
+  // Remove any previous vote from this person (replace, don't stack)
+  const filtered = all.filter(v => v.name !== voterName);
+  filtered.push({ ...votes, name: voterName, timestamp: Date.now() });
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered));
+}
+
+// ========== NAME PICKER ==========
+function pickName(btn, name) {
+  document.querySelectorAll('.name-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  voterName = name;
+  const startBtn = document.getElementById('start-voting-btn');
+  startBtn.style.opacity = '1';
+  startBtn.style.pointerEvents = 'auto';
+  startBtn.textContent = 'Let\'s go, ' + name + '! →';
+}
+
+function startVoting() {
+  if (!voterName) return;
+  currentStep = 1;
+  updateScreens();
+}
+
+// ========== OPTION LABELS ==========
+const optionLabels = {
+  barracuda: '🌊 Barracuda',
+  elitacate: '🧀 El Itacate',
+  marys: '🌮 Mary\'s Traditional',
+  micelanea: '🥣 Micelanea',
+  explore: '🎨 Explore Town',
+  beach: '🏖️ Beach & Pool',
+  market: '🛍️ Hippie Market',
+  spa: '💆‍♀️ Spa & Massage',
+  altoalto: '🍹 Alto Alto',
+  embers: '🔥 The Embers',
+  carbon: '🔥 Carbon',
+  larustica: '🍕 La Rústica',
+  achara: '🥡 Achara Thai',
+  xochi: '🎵 Xochi',
+  surf: '🏄‍♀️ Surf Lessons',
+  yoga: '🧘‍♀️ Beach Yoga',
+  snorkel: '🤿 Snorkeling',
+  lazymorning: '😴 Sleep In & Beach',
+  streetfood: '🌮 Street Food Crawl',
+  pool: '🏊‍♀️ Pool & Spa',
+  tequila: '🥃 Tequila Tasting',
+  shopping: '🛍️ Shopping',
+  cooking: '👩‍🍳 Cooking Class',
+  barhopping: '🍸 Bar Hopping',
+  beachnight: '🌊 Beach Night',
+  marietas: '🏝️ Marietas Islands',
+  jungle: '🌿 Jungle Zipline & ATV',
+  surfday: '🏄‍♀️ Full Surf Day',
+  beachday: '🏖️ Pure Beach Day',
+  sunset: '🌅 Sunset Horseback',
+  walk: '🚶‍♀️ Beach Walk & Photos',
+  sleep: '😴 Sleep In',
+  hotel: '🏨 MAXA (Hotel)',
+  roomhh: '🏨 Room Happy Hour',
+  poolbar: '🏊‍♀️ Pool & MAZO Bar',
+  tacotour: '🌮 Tacos & Tequila Tour',
+  poolhh: '🏊‍♀️ Pool & Room Happy Hour',
+  mazo: '🏨 MAZO (Hotel Restaurant)',
+  pooldrinks: '🏊‍♀️ Pool, Drinks & Hotel Bites',
+  ownthing: '🤙 Do Your Own Thing',
+  writein: '✏️ Write-In Vote',
+};
+
+const categoryLabels = {
+  'd1-lunch': 'Day 1 — Lunch',
+  'd1-afternoon': 'Day 1 — Afternoon',
+  'd1-sunset': 'Day 1 — Sunset Drinks',
+  'd1-dinner': 'Day 1 — Dinner',
+  'd2-morning': 'Day 2 — Morning Activity',
+  'd2-lunch': 'Day 2 — Lunch',
+  'd2-afternoon': 'Day 2 — Afternoon',
+  'd2-dinner': 'Day 2 — Dinner',
+  'd2-night': 'Day 2 — Night',
+  'd3-bigactivity': 'Day 3 — Big Activity',
+  'd3-afternoon': 'Day 3 — Afternoon',
+  'd3-dinner': 'Day 3 — Last Dinner',
+  'd4-morning': 'Day 4 — Last Morning',
+  'd4-brunch': 'Day 4 — Farewell Brunch',
+};
+
+const categoryColors = {
+  'd1-lunch': 'var(--coral)',
+  'd1-afternoon': 'var(--teal)',
+  'd1-sunset': 'var(--gold)',
+  'd1-dinner': 'var(--coral)',
+  'd2-morning': 'var(--teal)',
+  'd2-lunch': 'var(--coral)',
+  'd2-afternoon': 'var(--purple)',
+  'd2-dinner': 'var(--coral)',
+  'd2-night': 'var(--purple)',
+  'd3-bigactivity': 'var(--teal)',
+  'd3-afternoon': 'var(--gold)',
+  'd3-dinner': 'var(--coral)',
+  'd4-morning': 'var(--teal)',
+  'd4-brunch': 'var(--coral)',
+};
+
+// ========== NAVIGATION ==========
+function goToStep(step) {
+  if (step < 0 || step >= totalSteps) return;
+  if (step === 5 && Object.keys(myVotes).length === 0) return; // Can't see results without voting
+  if (step > 0 && !voterName) return; // Must pick name first
+  currentStep = step;
+  updateScreens();
+}
+
+function nextStep() {
+  if (currentStep < totalSteps - 1) {
+    currentStep++;
+    updateScreens();
+  }
+}
+
+function prevStep() {
+  if (currentStep > 0) {
+    currentStep--;
+    updateScreens();
+  }
+}
+
+function updateScreens() {
+  document.querySelectorAll('.screen').forEach((s, i) => {
+    s.classList.toggle('active', i === currentStep);
+  });
+  document.querySelectorAll('.step-dot').forEach((d, i) => {
+    d.classList.remove('active', 'completed');
+    if (i === currentStep) d.classList.add('active');
+    else if (i < currentStep) d.classList.add('completed');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ========== VOTING ==========
+function selectOption(card) {
+  const category = card.dataset.category;
+  const value = card.dataset.value;
+
+  // Deselect siblings
+  card.closest('.options-row').querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  card.classList.add('selected');
+  myVotes[category] = value;
+
+  // If write-in is selected, focus the input
+  if (value === 'writein') {
+    const input = card.querySelector('.write-in-input');
+    if (input) setTimeout(() => input.focus(), 100);
+  }
+}
+
+// Store write-in text per category
+const writeInTexts = {};
+
+function handleWriteIn(input, category) {
+  const text = input.value.trim();
+  if (text) {
+    writeInTexts[category] = text;
+    // Store as a special key so it shows in results
+    myVotes[category] = 'writein:' + text;
+  }
+}
+
+function submitVotes() {
+  if (Object.keys(myVotes).length === 0) {
+    alert('Pick at least a few options before submitting!');
+    return;
+  }
+  saveVote(myVotes);
+  currentStep = 5;
+  updateScreens();
+  renderResults();
+}
+
+function resetVoting() {
+  myVotes = {};
+  document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+  currentStep = 0;
+  updateScreens();
+}
+
+// ========== RESULTS ==========
+function renderResults() {
+  const allVotes = getAllVotes();
+  const container = document.getElementById('results-container');
+  container.innerHTML = '';
+
+  document.getElementById('total-votes').textContent = allVotes.length;
+
+  const categories = Object.keys(categoryLabels);
+
+  categories.forEach(cat => {
+    // Count votes per option
+    const counts = {};
+    allVotes.forEach(v => {
+      if (v[cat]) {
+        counts[v[cat]] = (counts[v[cat]] || 0) + 1;
+      }
+    });
+
+    if (Object.keys(counts).length === 0) return;
+
+    const maxCount = Math.max(...Object.values(counts));
+    const totalForCat = Object.values(counts).reduce((a, b) => a + b, 0);
+
+    let html = `<div style="margin-bottom:20px;">`;
+    html += `<div style="font-size:0.82rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">${categoryLabels[cat]}</div>`;
+
+    // Sort by count descending
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+
+    sorted.forEach(([opt, count]) => {
+      const pct = Math.round((count / totalForCat) * 100);
+      const isWinner = count === maxCount;
+      const color = categoryColors[cat] || 'var(--coral)';
+      const label = opt.startsWith('writein:') ? '✏️ ' + opt.replace('writein:', '') : (optionLabels[opt] || opt);
+
+      html += `<div class="results-bar">
+        <div class="results-label">${label}${isWinner ? '<span class="winner-badge">TOP PICK</span>' : ''}</div>
+        <div class="results-bar-fill">
+          <div class="results-bar-inner" style="width:${Math.max(pct, 12)}%;background:${color};">
+            <span>${count} vote${count !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    html += `</div>`;
+    container.innerHTML += html;
+  });
+}
+
+// ========== BUILD FINAL ITINERARY ==========
+function buildFinalItinerary() {
+  const allVotes = getAllVotes();
+  const card = document.getElementById('final-itinerary-card');
+  const container = document.getElementById('final-itinerary');
+
+  if (allVotes.length === 0) {
+    alert('No votes yet! Get everyone to vote first.');
+    return;
+  }
+
+  // Find winner for each category
+  function getWinner(cat) {
+    const counts = {};
+    allVotes.forEach(v => {
+      if (v[cat]) counts[v[cat]] = (counts[v[cat]] || 0) + 1;
+    });
+    if (Object.keys(counts).length === 0) return null;
+    return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+  }
+
+  const schedule = [
+    { day: 1, label: 'Saturday, March 28 — Arrival Day', color: 'var(--coral)', items: [
+      { time: '11:00 AM', fixed: true, name: 'Land at Puerto Vallarta Airport', desc: 'Grab bags, meet shuttle driver. ~1 hr ride to Sayulita.' },
+      { time: '1:00 PM', fixed: true, name: 'Arrive & Check in at La Puesta Sayulita', desc: '25 steps to the beach!' },
+      { time: '1:30 PM', cat: 'd1-lunch' },
+      { time: '3:00 PM', cat: 'd1-afternoon' },
+      { time: '5:00 PM', cat: 'd1-sunset' },
+      { time: '7:30 PM', cat: 'd1-dinner' },
+    ]},
+    { day: 2, label: 'Sunday, March 29 — Full Day', color: 'var(--teal)', items: [
+      { time: '9:00 AM', cat: 'd2-morning' },
+      { time: '1:00 PM', cat: 'd2-lunch' },
+      { time: '3:00 PM', cat: 'd2-afternoon' },
+      { time: '7:00 PM', cat: 'd2-dinner' },
+      { time: '9:00 PM', cat: 'd2-night' },
+    ]},
+    { day: 3, label: 'Monday, March 30 — Adventure Day', color: 'var(--gold)', items: [
+      { time: '8:30 AM', cat: 'd3-bigactivity' },
+      { time: '4:00 PM', cat: 'd3-afternoon' },
+      { time: '7:30 PM', cat: 'd3-dinner' },
+    ]},
+    { day: 4, label: 'Tuesday, March 31 — Departure', color: 'var(--purple)', items: [
+      { time: '7:00 AM', cat: 'd4-morning' },
+      { time: '9:00 AM', cat: 'd4-brunch' },
+      { time: '10:30 AM', fixed: true, name: 'Checkout & Last Beach Walk', desc: 'Group photos, soak it in!' },
+      { time: '11:00 AM', fixed: true, name: 'Shuttle to PVR Airport', desc: 'Allow 1.5 hrs for ride + check-in. Safe travels!' },
+    ]},
+  ];
+
+  const optionDescs = {
+    barracuda: 'Seafood tacos on the main drag. Fresh, vibrant, great margaritas.',
+    elitacate: 'Famous cheese-wrapped burrito. Quick, casual, incredible.',
+    marys: 'Big portions, authentic Mexican, great prices.',
+    micelanea: 'Fresh juices, smoothie bowls, healthy brunch.',
+    explore: 'Murals, street art, boutiques, surf shops, town square.',
+    beach: 'Hit the sand and pool at La Puesta. Waterslide!',
+    market: 'Riverside hippie market — handmade goods, jewelry, souvenirs.',
+    spa: 'Massages and pampering. Way cheaper than home.',
+    altoalto: 'Rooftop craft cocktails with amazing views.',
+    embers: 'Happy hour 4-6 PM. Mediterranean-Mexican creative menu.',
+    carbon: 'Charcoal-grilled octopus, tuna tartare, garlic prawns.',
+    larustica: 'Wood-fired pizza, handmade pasta. Great for groups.',
+    achara: 'Amazing Thai food! Scratch-made curries. Wed-Sun 5:30-11 PM.',
+    xochi: 'Live music, dancing, great cocktails. Veggie-friendly.',
+    surf: 'Group surf lesson, 1.5-2 hrs. Beginners welcome!',
+    yoga: 'Beachfront yoga session. Peaceful and grounding.',
+    snorkel: 'Guided snorkel tour with gear included, or rent and explore on your own.',
+    lazymorning: 'No alarm. Slow start, then straight to the beach.',
+    streetfood: 'Wander and try taco stands, fruit carts, vendors.',
+    pool: 'Waterslide, pool, maybe a massage. Full chill.',
+    tequila: 'Local tequila/mezcal tasting. Sample the good stuff.',
+    shopping: 'Local shops — beachwear, jewelry, art, souvenirs.',
+    cooking: 'Make salsa, enchiladas, margaritas. Eat everything!',
+    barhopping: 'Multiple spots around town. Fun walkable bar scene.',
+    beachnight: 'Drinks on the beach under the stars.',
+    marietas: 'Snorkeling, Hidden Beach, boat ride. The #1 excursion!',
+    jungle: 'Zip through jungle canopy + ATV trails. Adrenaline!',
+    surfday: 'Morning lesson + afternoon free surf.',
+    beachday: 'No schedule. Beach, pool, books, naps, repeat.',
+    sunset: 'Horses along the beach at sunset. Instagram-perfect.',
+    walk: 'Last stroll on the sand, group photos.',
+    sleep: 'Sleep until you have to leave. Priceless.',
+    hotel: 'Easy breakfast at the hotel\'s MAXA restaurant.',
+    roomhh: 'Grab cocktail ingredients and snacks from a local shop, mix drinks, chill by the pool.',
+    poolbar: 'Chill at La Puesta pool, sunset drinks at the hotel\'s oceanview bar.',
+    tacotour: 'Walking food tour — 5 stops, tacos, tequila, mezcal. All included!',
+    poolhh: 'Pool time, mix drinks and snack on store-bought goodies. Low-key afternoon vibes.',
+    mazo: 'Award-winning Chef Lacho Ruiz. Elevated Mexican, ocean views, local seafood.',
+    pooldrinks: 'Hit the pool & waterslide, order food and drinks poolside at MAZO bar.',
+    ownthing: 'Sleep in, nap, wander, explore — no pressure, do whatever feels right.',
+    writein: 'Custom write-in suggestion from the group.',
+  };
+
+  let html = '';
+
+  schedule.forEach(day => {
+    html += `<div class="final-day-header">
+      <div class="final-day-badge" style="background:${day.color};">${day.day}</div>
+      ${day.label}
+    </div>`;
+
+    day.items.forEach(item => {
+      if (item.fixed) {
+        html += `<div class="final-event">
+          <div class="final-time">${item.time}</div>
+          <div class="final-details">
+            <div class="final-name">${item.name}</div>
+            <div class="final-desc">${item.desc}</div>
+          </div>
+        </div>`;
+      } else {
+        const winner = getWinner(item.cat);
+        if (winner) {
+          const isWriteIn = winner.startsWith('writein:');
+          const winnerName = isWriteIn ? '✏️ ' + winner.replace('writein:', '') : (optionLabels[winner] || winner);
+          const winnerDesc = isWriteIn ? 'Write-in suggestion from the group!' : (optionDescs[winner] || '');
+          html += `<div class="final-event">
+            <div class="final-time">${item.time}</div>
+            <div class="final-details">
+              <div class="final-name">${winnerName}</div>
+              <div class="final-desc">${winnerDesc}</div>
+            </div>
+          </div>`;
+        }
+      }
+    });
+  });
+
+  container.innerHTML = html;
+  card.style.display = 'block';
+  setTimeout(() => card.scrollIntoView({ behavior: 'smooth' }), 100);
+}
+
+// Init: if votes exist, show count on results screen
+if (getAllVotes().length > 0) {
+  // Pre-render results so step 5 dot is accessible
+}
+</script>
+</body>
+</html>
